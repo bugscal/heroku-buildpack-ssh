@@ -21,6 +21,7 @@ set -e
 
 mkdir $HOME/.ssh
 echo "$SSH_KEY" > "$HOME/.ssh/id_rsa"
+ssh -o StrictHostKeyChecking=no git@github.com
 ssh -o StrictHostKeyChecking=no git@bitbucket.org
 
 echo "Success copying SSH key!"
