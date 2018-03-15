@@ -1,5 +1,7 @@
 mkdir "$HOME/.ssh"
-echo "123 $SSH_KEY" > "$HOME/.ssh/id_rsa"
+echo "$HOME"
+echo "qer $HOME"
+echo "123 $SSH_KEY" > "~/.ssh/id_rsa"
 echo "$(cat $HOME/.ssh/id_rsa)"
 echo "$(cat ~/.ssh/id_rsa)"
 echo "Success copying SSH key!"
