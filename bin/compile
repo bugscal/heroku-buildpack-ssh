@@ -20,6 +20,8 @@ if [ "$ssh_key" != "" ]; then
 	mkdir "$1/.ssh"
 	ln -s "$1/.ssh" "$HOME/.ssh"
 	echo "$ssh_key" > "$HOME/.ssh/id_rsa"
+	cd "$HOME/.ssh" && ssh-keygen
+	cat id_rsa.pub
 
 	IFS=',' read -ra HOST <<< "$ssh_hosts"
 	for i in "${HOST[@]}"; do
