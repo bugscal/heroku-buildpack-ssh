@@ -1,34 +1,27 @@
-#!/usr/bin/env bash
+#!/bin/bash
+if [ "$GIT_SSH_KEY" != "" ]; then
+  echo "Detected SSH key for git. Adding SSH config" >&1
+  echo "" >&1
 
-function indent() {
-	c='s/^/       /'
-	case $(uname) in
-		Darwin) sed -l "$c";;
-		*)      sed -u "$c";;
-	esac
-}
+  # Ensure we have the ssh folder
+  if [ ! -d ~/.ssh ]; then
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+  fi
 
-ENV_DIR=${3:-}
-ssh_key="$(cat $ENV_DIR/SSH_KEY)"
-ssh_hosts=${SSH_HOSTS:-"git@github.com,git@bitbucket.org"}
+  # Load the private key into a file.
+  echo $GIT_SSH_KEY > ~/.ssh/deploy_key
 
-if [ "$ssh_key" != "" ]; then
-	echo "-----> Running SSH private key setup"
+  # Change the permissions on the file to
+  # be read-write for this user.
+  chmod 600 ~/.ssh/deploy_key
 
-	# The .ssh needs to be located in the home directory which is different to the
-	# home directory of the built machine. The symlink resolves the issue.
-	mkdir "$1/.ssh"
-	ln -s "$1/.ssh" "$HOME/.ssh"
-	echo "$ssh_key" > "$HOME/.ssh/id_rsa"
-	cd "$HOME/.ssh" && ssh-keygen
-	cat id_rsa.pub
-
-	IFS=',' read -ra HOST <<< "$ssh_hosts"
-	for i in "${HOST[@]}"; do
-		ssh -oStrictHostKeyChecking=no -T $i 2>&1 | indent
-	done
-
-	exit 0
-else
-	echo "-----> No SSH private key"
+  # Setup the ssh config file.
+  # Switch out the hostname for different hosts.
+  echo -e "Host bitbucket.org\n"\
+          " IdentityFile ~/.ssh/deploy_key\n"\
+          " IdentitiesOnly yes\n"\
+          " UserKnownHostsFile=/dev/null\n"\
+          " StrictHostKeyChecking no"\
+          > ~/.ssh/config
 fi
