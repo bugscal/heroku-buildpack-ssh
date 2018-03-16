@@ -1,5 +1,9 @@
 #!/bin/sh
+echo "HI"
+
+echo "$GIT_SSH_KEY"
 if [ "$GIT_SSH_KEY" != "" ]; then
+  echo "YES"
   echo "Detected SSH key for git. Adding SSH config" >&1
   echo "" >&1
 
